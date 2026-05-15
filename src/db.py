@@ -40,3 +40,4 @@ def create_tables():
         if "already exists" not in str(e):
             print(f"Erro ao criar tabelas: {e}")
             
+            

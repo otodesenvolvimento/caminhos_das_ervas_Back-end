@@ -9,23 +9,27 @@ class ProductIn(Schema):
     quantity = Integer( validate=[Range(min=0)],load_default=0)
     price = Float(required=True, validate=[Range(min=0.01)])
     image_path = String(load_default="assets/products/default.png") # Caminho padrão
+    categoria = String(required=True) # Adicione esta linha
 
 
 
 
+# No ficheiro src/schemas.py
 class ProductOut(Schema):
     id = Integer()
     name = String()
     description = String()
     quantity = Integer()
     price = Float()
-    image_path = String() # Aparece na resposta da API
+    image_path = String()
+    categoria = String() # Adicione esta linha
+    
 
 
 class ProductFilter(Schema):
     search = String(load_default=None)
     min_price = Float(load_default=None)
-    mas_price = Float(load_default=None)
+    max_price = Float(load_default=None)
 
 class UserIn(Schema):
     username = String(required=True)

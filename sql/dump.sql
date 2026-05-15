@@ -1,14 +1,15 @@
-CREATE TABLE products (
-    id INTEGER PRIMARY  KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     description TEXT,
-    quantity  INTEGER NOT NULL DEFAULT 0,
-    price FLOAT NOT NULL
-
-    
-
+    quantity INTEGER DEFAULT 0,
+    price REAL NOT NULL,
+    image_path TEXT DEFAULT 'assets/products/default.png',
+    categoria TEXT -- ESTA LINHA É OBRIGATÓRIA
 );
-ALTER TABLE products ADD COLUMN image_path TEXT;
+-- ALTER TABLE products ADD COLUMN image_path TEXT;
+
+-- ALTER TABLE products ADD COLUMN categoria TEXT;
 
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

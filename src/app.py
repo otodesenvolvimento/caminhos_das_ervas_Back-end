@@ -34,16 +34,8 @@ app.json.sort_keys = False
 # =========================================
 # CORS
 # =========================================
-
-CORS(
-    app,
-    supports_credentials=True,
-    resources={
-        r"/*": {
-            "origins": ["http://localhost:4200"]
-        }
-    }
-)
+CORS(app, resources={r"/*": {"origins": "http://localhost:4200"}}, supports_credentials=True)
+# CORS(app, supports_credentials=True, resources={ r"/*": {"origins": ["http://localhost:4200"] } )
 
 # =========================================
 # PASTA UPLOAD
@@ -280,7 +272,8 @@ def find_all_products(filter: dict):
             description,
             quantity,
             price,
-            image_path
+            image_path,
+            categoria   
         FROM products
         WHERE 1 = 1
     '''
@@ -335,7 +328,8 @@ def get_product(id):
             description,
             quantity,
             price,
-            image_path
+            image_path,
+            categoria
         FROM products
         WHERE id = ?
         ''',
@@ -358,7 +352,8 @@ def get_product(id):
         'description': row[2],
         'quantity': row[3],
         'price': row[4],
-        'image_path': row[5]
+        'image_path': row[5],
+        'categoria': row[6]
     }
 
 # =========================================
@@ -380,7 +375,8 @@ def create_products(product_in: dict):
         product_in.get('description'),
         product_in.get('quantity'),
         product_in.get('price'),
-        product_in.get('image_path')
+        product_in.get('image_path'),
+        product_in.get('categoria')
     )
 
     cursor.execute(
@@ -390,9 +386,10 @@ def create_products(product_in: dict):
             description,
             quantity,
             price,
-            image_path
+            image_path,
+            categoria
         )
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?)
         ''',
         parameters
     )
@@ -418,22 +415,18 @@ def update_product(id: int, product_in: dict):
     cursor = db.cursor()
 
     cursor.execute(
-        '''
+       '''
         UPDATE products
-        SET
-            name = ?,
-            description = ?,
-            quantity = ?,
-            price = ?,
-            image_path = ?
+        SET name = ?, description = ?, quantity = ?, price = ?, image_path = ?, categoria = ?
         WHERE id = ?
-        ''',
+    ''',
         (
             product_in.get('name'),
             product_in.get('description'),
             product_in.get('quantity'),
             product_in.get('price'),
             product_in.get('image_path'),
+            product_in.get('categoria'),
             id
         )
     )
