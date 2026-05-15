@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caminho das Ervas | Admin</title>
+    <style>
+        :root {
+            --primary: #2c5e2e;
+            --gold: #c5a059;
+            --bg: #f9fbf9;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        h1 { color: var(--primary); letter-spacing: 2px; }
+
+        .container { max-width: 1000px; margin: auto; }
+
+        /* Formulário */
+        .product-form {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        input, textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            grid-column: span 2;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover { background: #1e4220; }
+
+        /* Lista de Produtos */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover { transform: translateY(-5px); }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #eee;
+        }
+
+        .product-info { padding: 15px; }
+        .price { color: var(--gold); font-weight: bold; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>CAMINHO DAS ERVAS</h1>
+        <p>Gestão de Inventário Premium</p>
+    </header>
+
+    <section>
+        <h3>Cadastrar Novo Produto</h3>
+        <div class="product-form" id="productForm">
+            <input type="text" id="name" placeholder="Nome do Produto" required>
+            <input type="number" id="price" placeholder="Preço (R$)" step="0.01" required>
+            <input type="number" id="quantity" placeholder="Quantidade">
+            <input type="text" id="image_path" placeholder="Caminho da Imagem (ex: assets/products/erva.jpg)">
+            <textarea id="description" placeholder="Descrição" style="grid-column: span 2;"></textarea>
+            <button onclick="saveProduct()">CADASTRAR PRODUTO</button>
+        </div>
+    </section>
+
+    <hr>
+
+    <section>
+        <h3>Produtos Disponíveis</h3>
+        <div class="product-grid" id="productGrid">
+            </div>
+    </section>
+</div>
+
+<script>
+    const API_URL = "http://127.0.0.1:5000";
+
+    // Função para buscar produtos
+    async function fetchProducts() {
+        try {
+            const response = await fetch(`${API_URL}/products`);
+            const products = await response.json();
+            renderProducts(products);
+        } catch (error) {
+            console.error("Erro ao carregar produtos:", error);
+        }
+    }
+
+    // Função para renderizar na tela
+    function renderProducts(products) {
+        const grid = document.getElementById('productGrid');
+        grid.innerHTML = '';
+
+        products.forEach(p => {
+            grid.innerHTML += `
+                <div class="product-card">
+                    <img src="${API_URL}/${p.image_path || 'assets/default.png'}" alt="${p.name}">
+                    <div class="product-info">
+                        <h4>${p.name}</h4>
+                        <p>${p.description || ''}</p>
+                        <p>Estoque: ${p.quantity}</p>
+                        <div class="price">R$ ${p.price.toFixed(2)}</div>
+                        <button onclick='editProduct(${JSON.stringify(p)})' style="background: var(--gold)margin-top:10px;">EDITAR</button>
+                </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+    }
+
+    // Função para salvar novo produto
+    async function saveProduct() {
+        const product = {
+            name: document.getElementById('name').value,
+            price: parseFloat(document.getElementById('price').value),
+            quantity: parseInt(document.getElementById('quantity').value) || 0,
+            image_path: document.getElementById('image_path').value,
+            description: document.getElementById('description').value
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(product)
+            });
+
+            if (response.ok) {
+                alert("Produto cadastrado!");
+                fetchProducts(); // Atualiza a lista
+                document.querySelectorAll('input, textarea').forEach(i => i.value = ''); // Limpa form
+            }
+        } catch (error) {
+            alert("Erro ao salvar produto");
+        }
+    }
+    // Preenche o formulário com os dados para editar
+function editProduct(product) {
+    document.getElementById('productId').value = product.id;
+    document.getElementById('name').value = product.name;
+    document.getElementById('price').value = product.price;
+    document.getElementById('quantity').value = product.quantity;
+    document.getElementById('description').value = product.description || '';
+    document.getElementById('image_path').value = product.image_path || '';
+
+    document.getElementById('btnSave').innerText = "SALVAR ALTERAÇÕES";
+    document.getElementById('btnCancel').style.display = "block";
+    window.scrollTo(0, 0); // Sobe a página para o formulário
+}
+
+// Limpa o formulário e volta ao estado de cadastro
+function clearForm() {
+    document.getElementById('productId').value = '';
+    document.querySelectorAll('input, textarea').forEach(i => i.value = '');
+    document.getElementById('btnSave').innerText = "CADASTRAR PRODUTO";
+    document.getElementById('btnCancel').style.display = "none";
+}
+
+// Modifique a sua função saveProduct existente:
+async function saveProduct() {
+    const id = document.getElementById('productId').value;
+    const product = {
+        name: document.getElementById('name').value,
+        price: parseFloat(document.getElementById('price').value),
+        quantity: parseInt(document.getElementById('quantity').value) || 0,
+        description: document.getElementById('description').value,
+        image_path: document.getElementById('image_path').value
+    };
+
+    // Se tiver ID, usa PUT (atualizar), senão usa POST (criar)
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `${API_URL}/product/${id}` : `${API_URL}/products`;
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(product)
+        });
+
+        if (response.ok) {
+            alert(id ? "Produto atualizado!" : "Produto cadastrado!");
+            clearForm();
+            fetchProducts();
+        } else {
+            const errorData = await response.json();
+            alert("Erro: " + (errorData.message || "Falha na operação"));
+        }
+    } catch (error) {
+        console.error("Erro na requisição:", error);
+    }
+}
+
+    // Carregar ao iniciar
+    fetchProducts();
+</script>
+<div class="product-form" id="productForm">
+    <input type="hidden" id="productId"> <input type="text" id="name" placeholder="Nome do Produto" required>
+    <input type="number" id="price" placeholder="Preço (R$)" step="0.01" required>
+    <input type="number" id="quantity" placeholder="Quantidade">
+    <input type="text" id="image_path" placeholder="Caminho da Imagem">
+    <textarea id="description" placeholder="Descrição" style="grid-column: span 2;"></textarea>
+    <button id="btnSave" onclick="saveProduct()">CADASTRAR PRODUTO</button>
+    <button id="btnCancel" onclick="clearForm()" style="display:none; background: #666;">CANCELAR</button>
+</div>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caminho das Ervas | Sistema Integrado</title>
+    <style>
+        :root {
+            --primary: #2c5e2e;
+            --gold: #c5a059;
+            --bg: #f4f7f4;
+            --card-bg: #ffffff;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Optima', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            color: var(--text);
+        }
+
+        /* Navegação e Header */
+        header {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            background: var(--primary);
+            padding: 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+
+        /* Seções */
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* Formulários Premium */
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        input, textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-main { background: var(--primary); color: white; }
+        .btn-main:hover { background: #1e4220; }
+        .btn-edit { background: var(--gold); color: white; margin-top: 10px; width: 100%; }
+
+        /* Grid de Produtos */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .product-info { padding: 20px; }
+        .product-info h4 { margin: 0 0 10px; color: var(--primary); }
+        .price { color: var(--gold); font-size: 1.3em; font-weight: bold; }
+
+        .auth-box { max-width: 400px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 style="margin:0; letter-spacing: 4px;">CAMINHO DAS ERVAS</h1>
+    <p style="font-style: italic; color: #666;">Essência e Bem-estar</p>
+</header>
+
+<nav>
+    <a onclick="showSection('shop')">Loja</a>
+    <a onclick="showSection('admin')">Gerenciar Produtos</a>
+    <a onclick="showSection('auth')">Login / Registro</a>
+</nav>
+
+<div class="container">
+
+    <section id="shop" class="section active">
+        <h2 style="text-align: center; color: var(--primary);">Nossa Coleção</h2>
+        <div class="product-grid" id="productGrid">
+            </div>
+    </section>
+
+    <section id="admin" class="section">
+        <div class="form-container">
+            <h2 id="formTitle">Novo Produto</h2>
+            <div class="grid-form">
+                <input type="hidden" id="productId">
+                <input type="text" id="pName" placeholder="Nome do Produto" class="full-width">
+                <input type="number" id="pPrice" placeholder="Preço (R$)" step="0.01">
+                <input type="number" id="pQuantity" placeholder="Estoque">
+                <input type="text" id="pImage" placeholder="Caminho da Imagem (assets/products/erva.jpg)" class="full-width">
+                <textarea id="pDesc" placeholder="Breve descrição do produto..." class="full-width" rows="4"></textarea>
+                
+                <button class="btn-main full-width" id="btnSave" onclick="handleSaveProduct()">Finalizar Cadastro</button>
+                <button class="full-width" id="btnCancel" onclick="resetForm()" style="display:none; background:#eee;">Cancelar Edição</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="auth" class="section">
+        <div class="form-container auth-box">
+            <h2 id="authTitle">Acesse sua Conta</h2>
+            <div class="grid-form">
+                <input type="text" id="authUser" placeholder="Usuário" class="full-width">
+                <input type="password" id="authPass" placeholder="Senha" class="full-width">
+                
+                <button class="btn-main full-width" onclick="handleAuth('login')">Entrar</button>
+                <p style="text-align: center;" class="full-width">OU</p>
+                <button style="background: transparent; border: 1px solid var(--primary); color: var(--primary);" 
+                        class="full-width" onclick="handleAuth('register')">Criar Nova Conta</button>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    const API_URL = "http://127.0.0.1:5000";
+
+    // --- CONTROLE DE NAVEGAÇÃO ---
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'shop') fetchProducts();
+    }
+
+    // --- LÓGICA DE PRODUTOS (LISTAR) ---
+    async function fetchProducts() {
+        try {
+            const res = await fetch(`${API_URL}/products`,{ credentials: 'include' });
+            const products = await res.json();
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+
+            products.forEach(p => {
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <img src="${API_URL}/${p.image_path || 'assets/products/default.png'}" onerror="this.src='https://via.placeholder.com/300x200?text=Erva'">
+                        <div class="product-info">
+                            <h4>${p.name}</h4>
+                            <p style="font-size:0.85em; color: #777;">${p.description || ''}</p>
+                            <div class="price">R$ ${p.price.toFixed(2)}</div>
+                            <button class="btn-edit" onclick='loadEdit(${JSON.stringify(p)})'>EDITAR DETALHES</button>
+                        </div>
+                    </div>
+                `;
+            });
+        } catch (e) { console.error("Erro ao carregar", e); }
+    }
+
+    // --- LÓGICA DE CADASTRO / EDIÇÃO ---
+    async function handleSaveProduct() {
+        const id = document.getElementById('productId').value;
+        const data = {
+            name: document.getElementById('pName').value,
+            price: parseFloat(document.getElementById('pPrice').value),
+            quantity: parseInt(document.getElementById('pQuantity').value) || 0,
+            image_path: document.getElementById('pImage').value,
+            description: document.getElementById('pDesc').value
+        };
+
+        const method = id ? 'PUT' : 'POST';
+        const url = id ? `${API_URL}/product/${id}` : `${API_URL}/products`;
+
+        const res = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+            credentials: 'include'
+        });
+
+        if (res.ok) {
+            alert(id ? "Produto Atualizado!" : "Produto Cadastrado!");
+            resetForm();
+            showSection('shop');
+        } else {
+            alert("Erro ao processar dados.");
+            const errorData = await res.json();
+    // Exibe a mensagem de erro vinda do servidor (ex: "Acesso restrito" ou "Preço inválido")
+    alert("Erro: " + (errorData.message || "Verifique os dados no console"));
+    console.error("Detalhes do erro:", errorData);
+        }
+    }
+
+    function loadEdit(p) {
+        showSection('admin');
+        document.getElementById('productId').value = p.id;
+        document.getElementById('pName').value = p.name;
+        document.getElementById('pPrice').value = p.price;
+        document.getElementById('pQuantity').value = p.quantity;
+        document.getElementById('pImage').value = p.image_path || '';
+        document.getElementById('pDesc').value = p.description || '';
+        
+        document.getElementById('formTitle').innerText = "Editando: " + p.name;
+        document.getElementById('btnSave').innerText = "Salvar Alterações";
+        document.getElementById('btnCancel').style.display = "block";
+    }
+
+    function resetForm() {
+        document.getElementById('productId').value = '';
+        document.querySelectorAll('#admin input, #admin textarea').forEach(i => i.value = '');
+        document.getElementById('formTitle').innerText = "Novo Produto";
+        document.getElementById('btnSave').innerText = "Finalizar Cadastro";
+        document.getElementById('btnCancel').style.display = "none";
+    }
+
+    // --- LÓGICA DE LOGIN / REGISTRO ---
+    async function handleAuth(type) {
+        const user = document.getElementById('authUser').value;
+        const pass = document.getElementById('authPass').value;
+
+        if(!user || !pass) return alert("Preencha todos os campos");
+
+        const url = type === 'login' ? `${API_URL}/login` : `${API_URL}/register`;
+        
+        try {
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, password: pass }),
+                credentials: 'include'
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message || "Sucesso!");
+                if(type === 'login') showSection('shop');
+            } else {
+                alert("Erro: " + data.message);
+            }
+        } catch (e) { alert("Servidor offline"); }
+    }
+
+    // Inicialização
+    fetchProducts();
+</script>
+
+</body>
+</html>
