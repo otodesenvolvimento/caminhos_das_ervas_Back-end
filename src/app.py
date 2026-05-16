@@ -1,3 +1,4 @@
+print("APP INICIANDO...")
 from flask_cors import CORS
 from flask import send_from_directory, request, session
 from werkzeug.utils import secure_filename
@@ -6,9 +7,13 @@ from http import HTTPStatus
 from apiflask import APIFlask, HTTPError
 import pandas as pd
 #from db import get_db, create_tables
+print("IMPORTANDO DB...")
 from src.db import get_db, create_tables
 #from models import Product
+print("IMPORTANDO MODELS...")
 from src.models import Produto
+print("APP INICIANDO...")
+print("IMPORTANDO SCHEMAS...")
 from src.schemas import (
     ProductIn,
     ProductFilter,
@@ -16,6 +21,7 @@ from src.schemas import (
     UserIn,
     UserOut
 )
+print("IMPORTS OK")
 # from schemas import (
 #     ProductIn,
 #     ProductFilter,
@@ -27,8 +33,9 @@ from src.schemas import (
 # =========================================
 # CONFIGURAÇÃO APP
 # =========================================
+print("CRIANDO APP...")
 app = APIFlask(__name__, title='Produtos API')
-
+print("APP CRIADO")
 app.secret_key = 'chave_secreta_do_oto'
 
 app.config.update(
