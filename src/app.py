@@ -5,8 +5,18 @@ import os
 from http import HTTPStatus
 from apiflask import APIFlask, HTTPError
 import pandas as pd
-from db import get_db, create_tables
-from models import Product
+#from db import get_db, create_tables
+from src.db import get_db, create_tables
+#from models import Product
+from src.models import Produto
+
+# from schemas import (
+#     ProductIn,
+#     ProductFilter,
+#     ProductOut,
+#     UserIn,
+#     UserOut
+# )
 from schemas import (
     ProductIn,
     ProductFilter,
