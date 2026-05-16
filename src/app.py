@@ -46,10 +46,17 @@ app.config.update(
 
 app.json.sort_keys = False
 
+# Lista de origens permitidas (Localhost para testes e Netlify para produção)
+origins_permitidas = [
+    "http://localhost:4200",
+    "https://caminhodaservas.netlify.app",
+    "https://agent-6a07924719adb8bc57f54758--caminhodaservas.netlify.app"
+
 # =========================================
 # CORS
 # =========================================
-CORS(app, resources={r"/*": {"origins": "https://agent-6a07924719adb8bc57f54758--caminhodaservas.netlify.app"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": origins_permitidas}}, supports_credentials=True)    
+#CORS(app, resources={r"/*": {"origins": "https://agent-6a07924719adb8bc57f54758--caminhodaservas.netlify.app"}}, supports_credentials=True)
 # CORS(app, supports_credentials=True, resources={ r"/*": {"origins": ["http://localhost:4200"] } )
 
 # =========================================
