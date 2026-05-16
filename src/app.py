@@ -50,7 +50,7 @@ app.json.sort_keys = False
 origins_permitidas = [
     "http://localhost:4200",
     "https://caminhodaservas.netlify.app",
-    "https://agent-6a07924719adb8bc57f54758--caminhodaservas.netlify.app"
+    "https://agent-6a07924719adb8bc57f54758--caminhodaservas.netlify.app"]
 
 # =========================================
 # CORS
