@@ -316,7 +316,7 @@ def find_all_products(filter: dict):
 
     db.close()
 
-    return [Product(*row) for row in rows]
+    return [Produto(*row) for row in rows]
 
 # =========================================
 # PRODUTO POR ID
@@ -475,7 +475,8 @@ def delete_product(id):
 # =========================================
 
 if __name__ == '__main__':
+    with app.app_context():
 
-    create_tables()
+   
 
   
