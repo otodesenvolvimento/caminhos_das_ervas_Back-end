@@ -10,6 +10,14 @@ from src.db import get_db, create_tables
 #from models import Product
 from src.models import Produto
 
+
+from src.schemas import (
+    ProductIn,
+    ProductFilter,
+    ProductOut,
+    UserIn,
+    UserOut
+)
 # from schemas import (
 #     ProductIn,
 #     ProductFilter,
@@ -17,13 +25,6 @@ from src.models import Produto
 #     UserIn,
 #     UserOut
 # )
-from schemas import (
-    ProductIn,
-    ProductFilter,
-    ProductOut,
-    UserIn,
-    UserOut
-)
 
 # =========================================
 # CONFIGURAÇÃO APP
