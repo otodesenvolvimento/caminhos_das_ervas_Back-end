@@ -9,8 +9,6 @@ import pandas as pd
 from src.db import get_db, create_tables
 #from models import Product
 from src.models import Produto
-
-
 from src.schemas import (
     ProductIn,
     ProductFilter,
@@ -29,7 +27,6 @@ from src.schemas import (
 # =========================================
 # CONFIGURAÇÃO APP
 # =========================================
-
 app = APIFlask(__name__, title='Produtos API')
 
 app.secret_key = 'chave_secreta_do_oto'

@@ -1,6 +1,7 @@
 import pandas as pd
 import os
-from db import get_db, create_tables
+#from db import get_db, create_tables
+from src.db import get_db, create_tables
 
 def sincronizar():
     # Garante que a pasta sql e a tabela existam antes de começar
