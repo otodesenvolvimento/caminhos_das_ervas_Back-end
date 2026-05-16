@@ -42,7 +42,7 @@ app.json.sort_keys = False
 # =========================================
 # CORS
 # =========================================
-CORS(app, resources={r"/*": {"origins": "http://localhost:4200"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "https://agent-6a07924719adb8bc57f54758--caminhodaservas.netlify.app/"}}, supports_credentials=True)
 # CORS(app, supports_credentials=True, resources={ r"/*": {"origins": ["http://localhost:4200"] } )
 
 # =========================================
