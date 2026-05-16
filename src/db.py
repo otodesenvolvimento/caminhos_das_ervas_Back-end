@@ -1,43 +1,45 @@
 import sqlite3
 import os
 
-def get_base_path():
-    # Obtém o caminho da pasta 'src' e sobe um nível para a raiz do projeto
-    src_path = os.path.dirname(os.path.abspath(__file__))
-    return os.path.dirname(src_path)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DB_FOLDER = os.path.join(BASE_DIR, "sql")
+DB_PATH = os.path.join(DB_FOLDER, "database.db")
 
 def get_db():
-    # Define o caminho para a pasta 'sql' que está fora da 'src'
-    root_path = get_base_path()
-    db_folder = os.path.join(root_path, "sql")
-    db_path = os.path.join(db_folder, "database.db")
-    
-    # Cria a pasta 'sql' na raiz se ela não existir
-    if not os.path.exists(db_folder):
-        os.makedirs(db_folder)
-        
-    return sqlite3.connect(db_path)
+
+    if not os.path.exists(DB_FOLDER):
+        os.makedirs(DB_FOLDER)
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+
+    return conn
 
 def create_tables():
-    root_path = get_base_path()
-    caminho_sql = os.path.join(root_path, "sql", "dump.sql")
+
+    caminho_sql = os.path.join(DB_FOLDER, "dump.sql")
 
     if not os.path.exists(caminho_sql):
-        print(f"ERRO: Ficheiro '{caminho_sql}' não encontrado na raiz.")
+        print(f"Arquivo SQL não encontrado: {caminho_sql}")
         return
 
     try:
-        with open(caminho_sql, "r", encoding='utf-8') as file:
+
+        with open(caminho_sql, "r", encoding="utf-8") as file:
             sql = file.read()
-        
+
         db = get_db()
+
         cursor = db.cursor()
+
         cursor.executescript(sql)
+
         db.commit()
         db.close()
-        print("Estrutura do banco de dados verificada na pasta raiz.")
+
+        print("Banco inicializado com sucesso.")
+
     except Exception as e:
-        if "already exists" not in str(e):
-            print(f"Erro ao criar tabelas: {e}")
-            
-            
+
+        print(f"Erro ao criar tabelas: {e}")
