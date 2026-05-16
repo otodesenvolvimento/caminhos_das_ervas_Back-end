@@ -49,7 +49,7 @@ app.json.sort_keys = False
 # =========================================
 # CORS
 # =========================================
-CORS(app, resources={r"/*": {"origins": "https://agent-6a07924719adb8bc57f54758--caminhodaservas.netlify.app/"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "https://agent-6a07924719adb8bc57f54758--caminhodaservas.netlify.app"}}, supports_credentials=True)
 # CORS(app, supports_credentials=True, resources={ r"/*": {"origins": ["http://localhost:4200"] } )
 
 # =========================================
@@ -84,9 +84,10 @@ def check_admin():
 # =========================================
 # ARQUIVOS
 # =========================================
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def home():
-    return {"status": "online"}
+    status = "online"
+    return f"<h1>{status}</h1>"
 
 @app.post('/products/upload-excel')
 def upload_excel():
