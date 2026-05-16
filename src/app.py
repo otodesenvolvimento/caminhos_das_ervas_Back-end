@@ -84,10 +84,9 @@ def check_admin():
 # =========================================
 # ARQUIVOS
 # =========================================
-@app.get("/", response_class=HTMLResponse)
+@app.get("/")
 def home():
-    status = "online"
-    return f"<h1>{status}</h1>"
+    return {"<h1>status": "online<h1>"}    
 
 @app.post('/products/upload-excel')
 def upload_excel():
