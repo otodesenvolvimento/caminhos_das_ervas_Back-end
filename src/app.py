@@ -11,7 +11,7 @@ print("IMPORTANDO DB...")
 from src.db import get_db, create_tables
 #from models import Product
 print("IMPORTANDO MODELS...")
-from src.models import Produto
+from src.models import Product
 print("APP INICIANDO...")
 print("IMPORTANDO SCHEMAS...")
 from src.schemas import (
