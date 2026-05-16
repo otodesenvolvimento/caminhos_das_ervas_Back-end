@@ -77,6 +77,9 @@ def check_admin():
 # =========================================
 # ARQUIVOS
 # =========================================
+@app.get("/")
+def home():
+    return {"status": "online"}
 
 @app.post('/products/upload-excel')
 def upload_excel():
