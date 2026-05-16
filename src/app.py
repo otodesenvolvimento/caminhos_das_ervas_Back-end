@@ -86,7 +86,7 @@ def check_admin():
 # =========================================
 @app.get("/")
 def home():
-    return {"<h1>Status: Online</h1>"}    
+    return {"status": "online"}  
 
 @app.post('/products/upload-excel')
 def upload_excel():
